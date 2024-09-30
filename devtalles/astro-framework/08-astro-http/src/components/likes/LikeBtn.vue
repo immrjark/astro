@@ -6,7 +6,7 @@
     Like this post
   </button>
   <button v-else @click="likePost">
-    <span>{{ likeCount }}</span>
+    <!-- <span>{{ likeCount }}</span> -->
     Like 
   </button>
   {{ likeClicks }}
@@ -31,7 +31,7 @@ import debounce from 'lodash.debounce' // solo tienes que envolver con el deboun
   const likeClicks = ref(0);
   const isLoading = ref(true);
 
-  watch(likeCount, () => {
+  watch(likeCount, debounce(() => {
     // console.log('New like');
     fetch(`/api/posts/likes/${props.postId}`, {
       method: 'PUT',
@@ -40,7 +40,7 @@ import debounce from 'lodash.debounce' // solo tienes que envolver con el deboun
       },
       body: JSON.stringify({likes: likeClicks.value})
     })
-  })
+  }, 500) )
 
   const likePost = () => {
     // console.log('+1 like' , props.postId)
