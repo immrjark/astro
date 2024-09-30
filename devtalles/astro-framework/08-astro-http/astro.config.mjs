@@ -21,4 +21,7 @@ export default defineConfig({
   // adapter: node({
   //   mode: 'standalone',
   // }),
+  // experimental: {
+  //   actions: true, // esto no hace falta porque ya no están en experimental
+  // },
 });
