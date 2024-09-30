@@ -14,8 +14,9 @@
 
 +
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import confetti from 'canvas-confetti'
+import debounce from 'lodash.debounce' // solo tienes que envolver con el debounde la función que queires que actue así y listo -> debounde()
 
   interface Props {
     postId: string;
@@ -29,6 +30,17 @@ import confetti from 'canvas-confetti'
   const likeCount = ref(0);
   const likeClicks = ref(0);
   const isLoading = ref(true);
+
+  watch(likeCount, () => {
+    // console.log('New like');
+    fetch(`/api/posts/likes/${props.postId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({likes: likeClicks.value})
+    })
+  })
 
   const likePost = () => {
     // console.log('+1 like' , props.postId)
