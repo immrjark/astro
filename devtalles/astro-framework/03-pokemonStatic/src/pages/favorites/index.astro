@@ -1,0 +1,33 @@
+---
+import Title from "@components/shared/Title.astro";
+import Main from "../../layouts/Main.astro";
+
+// import { Counter } from "@components/others/Counter";
+import { FavPokemon } from "@components/pokemon/FavListPokemons";
+
+const counterValue = 14;
+---
+
+<Main title="favorite">
+  <Title>Favorites</Title>
+
+  <FavPokemon client:only="solid-js" />
+
+  <!-- <Counter
+    transition:persist-props
+    transition:persist="counterValue"
+    initialValue={counterValue}
+    client:visible
+  /> -->
+</Main>
+<script>
+  // con el transition persist y el valor del nombre, puedes decirle a astro que es el mismo componente y por ende, mantener el valor entre ambos
+  /**
+   *  con el transition persist y el valor del nombre, puedes decirle a astro que es el mismo componente
+   * y por ende, mantener el valor entre ambos.
+   * Además, para mantener las mismas props en ambos componentes aunque sean distintas props
+   * con la propiedad transition:persist-props en ambos componentes es como decirle a astro que ambos son iguales y que no haga
+   * un salto si son distintos valores de conunter value
+   *
+   */
+</script>

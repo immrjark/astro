@@ -1,0 +1,64 @@
+---
+import type { GetStaticPaths } from "astro";
+// ESTO ES SERVER SIDE
+import type { PokemonListResponse } from "../../interfaces/pokemon-list-response";
+import Main from "../../layouts/Main.astro";
+import PokemonCard from "src/components/pokemon/PokemonCard.astro";
+
+const title = "Zepplin";
+
+//necesitas el gtStaticPath si queires haces una paginación dinámica estatica
+export const getStaticPaths = (async ({ paginate }) => {
+  // en caso de astro, con poner el fetch directamente sería suficiente
+  const resp = await fetch("https://pokeapi.co/api/v2/pokemon?limit=151");
+  const data = (await resp.json()) as PokemonListResponse;
+
+  return paginate(data.results, { pageSize: 20 });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+---
+
+<Main title={title}>
+  <h1 class="text-4xl text-center">Pokemon List</h1>
+
+  <section
+    aria-label="Listado de pokemons"
+    class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-9"
+  >
+    {
+      page.data.map(
+        (
+          pokemon // esto es para la paginación, sin el page. no puedes hacer nada
+        ) => (
+          // <li>{pokemon.name}</li>
+          <PokemonCard name={pokemon.name} url={pokemon.url} />
+        )
+      ) /* no nos hace falta el key porque al ser contenido estático 'no se puede mover' */
+    }
+  </section>
+  <section class="flex gap-10 px-10 mt-10 items-center justify-center">
+    <a class:list={["btn", !page.url.prev && "disabled"]} href={page.url.prev}
+      >Preview</a
+    >
+    <span class="text-xl font-bold">{page.currentPage}</span>
+    <a
+      class:list={[
+        "btn",
+        {
+          disabled: !page.url.next,
+        },
+      ]}
+      href={page.url.next}>Next</a
+    >
+  </section>
+</Main>
+
+<style>
+  .btn {
+    @apply bg-pink-500 text-white px-6 py-1 rounded-full;
+  }
+  .disabled {
+    @apply bg-gray-600 text-gray-400 hover:cursor-not-allowed;
+  }
+</style>

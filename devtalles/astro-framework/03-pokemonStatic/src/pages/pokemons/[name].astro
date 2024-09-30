@@ -1,0 +1,173 @@
+---
+import type { GetStaticPaths } from "astro";
+import type { PokemonListResponse } from "../../interfaces/pokemon-list-response";
+
+import { Icon } from "astro-icon/components";
+
+import Main from "../../layouts/Main.astro";
+import PokemonCard from "src/components/pokemon/PokemonCard.astro";
+import Title from "@components/shared/Title.astro";
+
+// Esto es para crear las rutas estáticas espsonalizdas.
+// Los params en este caso son los fragmentos de url que son 'dinámicos' y las props son las que tiene el propio elemento
+// forma async y automática de generar las páginas
+export const getStaticPaths = (async () => {
+  const resp = await fetch(" https://pokeapi.co/api/v2/pokemon?limit=151");
+  const { results } = (await resp.json()) as PokemonListResponse; // el results es la respuesta de la llamada a la URL. No es un nombre inventado. y es donde vienen todos los pokemon, los 151
+  // console.log("hola mundo", results);
+
+  return results.map((results) => ({
+    params: { name: results.name },
+    props: { name: results.name, url: results.url },
+  }));
+}) satisfies GetStaticPaths;
+// forma manual de generar las páginas
+// export const getStaticPaths = (() => {
+//   return [
+//     {
+//       params: { name: "bulbasaur" },
+//       props: { url: "https://pokeapi.co/api/v2/pokemon/1/" },
+//     },
+//     {
+//       params: { name: "charmander" },
+//       props: { url: "https://pokeapi.co/api/v2/pokemon/4/" },
+//     },
+//   ];
+// }) satisfies GetStaticPaths;
+
+// con Astro.params puedes conseguir el nombre que has sacado en los getStaticPaths
+const { name } = Astro.params;
+const { url } = Astro.props; // de aquí también puedo sacar el name
+
+const id = url.split("/").at(-2);
+const audioSrc = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${id}.ogg`;
+const imageSrc = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+---
+
+<Main
+  title={`Pokemon ${name} - #${id} `}
+  description={`Información sobre ${name}`}
+  image={imageSrc}
+>
+  <article class="flex flex-col justify-center items-center mt-10 mx-10">
+    <div class="flex items-center justify-center gap-6">
+      <Title>{name}</Title>
+      <button id="btn-favorite" data-name={name} data-id={id}>
+        <Icon data-outline size={48} name="heart-outline" />
+        <Icon data-fill class="hidden" size={48} name="heart-fill" />
+      </button>
+    </div>
+    <section class="flex flex-row text-center items-center gap-4 mt-4">
+      <span class="text-xl text-slate-200">Its ID: {id}</span>
+      <button onclick="history.back()" class="text-yellow-500 underline"
+        >Go back</button
+      >
+    </section>
+    <PokemonCard name={name} url={`${url}`} isBig={true} />
+    <audio controls class="mt-10">
+      <source src={audioSrc} type="audio/ogg" />
+      Your brawser does not support tha audio element
+    </audio>
+  </article>
+</Main>
+{/* https://pokeapi.co/api/v2/pokemon?limit=151 */}
+
+<script>
+  //client scripting
+  // interface FavoritePokemon {
+  //   name: string;
+  //   id: number;
+  // }
+
+  import type { FavPokemons } from "src/interfaces/favPokemon";
+
+  // View Transitions en astro
+  // document.addEventListener("astro:before-preparation", () => {
+  //   console.log("astro:before-preparation");
+  // });
+  // document.addEventListener("astro:after-preparation", () => {
+  //   console.log("astro:after-preparation");
+  // });
+  // document.addEventListener("astro:before-swap", () => {
+  //   console.log("astro:before-swap");
+  // });
+  // document.addEventListener("astro:after-swap", () => {
+  //   console.log("astro:after-swap");
+  // });
+  // document.addEventListener("astro:page-load", () => {
+  //   console.log("astro:page-load");
+  // });
+
+  const handlePageLoad = () => {
+    // para grabar en el localStorage solo se puede hacer con string por ende, tienes que hacer un strigify y luego un parse
+    let favsPokemons: FavPokemons[] = JSON.parse(
+      localStorage.getItem("fav") ?? "[]" // llave para guardar en el LS
+    );
+
+    const btnFav = document.querySelector("#btn-favorite") as HTMLButtonElement;
+
+    if (!btnFav) return;
+
+    // porque al poder ser undefined tengo que ponerle que me los transforme en un string vacio al menos
+    const name = btnFav.dataset.name ?? "";
+    const id = btnFav.dataset.id ?? "";
+    const isFav = favsPokemons.some((fav) => fav.name === name); // el some es un métrodo de los arreglos que hace que en el momento que encuentro algún elemento que sea true, para de ejecutar
+
+    // gracias al haberles puesto el data- puedes cogerlos con el querySelector
+    const heartFill = btnFav.querySelector("[data-fill]") as HTMLElement;
+    const heartOutline = btnFav.querySelector("[data-outline]") as HTMLElement;
+
+    if (isFav) {
+      // para añadir o quitar el corazón e ir intercambiándolos
+      heartOutline.classList.add("hidden");
+      heartFill.classList.remove("hidden");
+    }
+
+    // función para añadir o quitar del LS
+    const toggleFav = () => {
+      const isFav = favsPokemons.some((fav) => fav.name === name); // el some es un métrodo de los arreglos que hace que en el momento que encuentro algún elemento que sea true, para de ejecutar
+
+      if (isFav) {
+        //Remove
+        favsPokemons = favsPokemons.filter((fav) => fav.name !== name);
+      } else {
+        // Add
+        favsPokemons.push({
+          id: +id,
+          name: name,
+        });
+      }
+
+      //ahora grabas en el LS y qeu solo se pueden string de ahí el stringify
+      localStorage.setItem("fav", JSON.stringify(favsPokemons));
+    };
+
+    btnFav.addEventListener("click", () => {
+      // console.log({ name, id })
+      heartFill.classList.toggle("hidden");
+      heartOutline.classList.toggle("hidden");
+
+      toggleFav(); // llamo para que se ejecute el guardado en el LS
+    });
+  };
+
+  document.addEventListener("astro:page-load", handlePageLoad);
+
+  // document.addEventListener("astro:page-load", () => {
+  //   // para que esto funcione tengo que tener los ViewTransitions de astro y no el creado con CSS en el layout
+  //   // se coloca el as ... porque puede ser null y así te lo evitas
+  //   const btnFav = document.querySelector("#btn-favorite") as HTMLButtonElement;
+
+  //   if (!btnFav) return;
+
+  //   const name = btnFav.dataset.name;
+  //   const id = btnFav.dataset.id;
+
+  //   btnFav.addEventListener("click", () => console.log({ name, id }));
+  // });
+</script>
+<style>
+  #btn-favorite {
+    @apply hover:animate-pulse;
+  }
+</style>

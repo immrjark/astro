@@ -1,0 +1,89 @@
+---
+import type { GetStaticPaths } from "astro";
+
+import { getCollection } from "astro:content";
+import { Image } from "astro:assets";
+import { getEntry } from "astro:content";
+
+// import Author from "@shared/Author.astro";
+import Title from "@shared/Title.astro";
+import Blog from "@layouts/Blog.astro";
+import { Formatter } from "@utils/formater";
+
+export const getStaticPaths = (async () => {
+  // como astro genera el contenido en tiempo de construcción, si quieres que las rutas las cree en este momemto, necesitas este getStaticPath y decirle que es lo que quieres estático
+
+  const blogPosts = await getCollection("blog");
+  return blogPosts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post: post },
+  }));
+
+  // return [
+  //   {
+  //     params: { slug: "post-01" },
+  //     props: { title: "First Post" },
+  //   },
+  // ];
+}) satisfies GetStaticPaths;
+const { post } = Astro.props;
+
+const frontmatter = post.data;
+
+// lo siguiente es para renderizar el contenido y esto es gracias a que en el file content/config.ts está 'type: "content",' sino no se podría hacer el render
+const { Content, headings } = await post.render(); // el content y headings es propio de astro y del content de aquí ☝🏽
+
+// para la visualización de los authors
+const author = await getEntry("author", post.data.author.id);
+---
+
+<Blog title={frontmatter.title}>
+  <section class="flex flex-col">
+    <Title>{frontmatter.title}</Title>
+    <!-- <Author>{frontmatter.author}</Author> no me es útil porque al ser un contenido generado 'dinámico' lo genera automático dependiendo del autor del blog -->
+    <div class="text-lg text-gray-400 flex flex-row gap-3">
+      <Image
+        src={author.data.avatar}
+        class="rounded-full"
+        alt={author.data.name}
+        width={40}
+        height={40}
+      />
+      <section class="flex flex-col">
+        <a
+          class="underline text-teal-400"
+          href={`/blog/${frontmatter.author.id}`}>{author.data.name}</a
+        >
+        <span class="text-sm text-gray-200"
+          >{Formatter.formatDate(frontmatter.date)}</span
+        >
+      </section>
+    </div>
+  </section>
+  <Image
+    src={frontmatter.image}
+    width={600}
+    height={220}
+    alt={frontmatter.title}
+    class="object-cover w-full h-[400px] my-5 rounded-md"
+    transition:name={`${post.slug}-image`}
+  />
+  <section>
+    <h2 class="text-lg text-white mb-2">Tabla de contenidos</h2>
+    <ol class="ml-4 underline text-yellow-500">
+      {
+        // esto es para la navegación de los headings
+        headings.map((headings, index) => (
+          <li>
+            <a href={`#${headings.slug}`}>
+              {index + 1} - {headings.text}
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+  <section>
+    <Content />
+  </section>
+</Blog>

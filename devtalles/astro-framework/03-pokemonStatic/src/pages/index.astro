@@ -1,0 +1,29 @@
+---
+// ESTO ES SERVER SIDE
+import Title from "@components/shared/Title.astro";
+import type { PokemonListResponse } from "../interfaces/pokemon-list-response";
+import Main from "../layouts/Main.astro";
+
+import PokemonCard from "src/components/pokemon/PokemonCard.astro";
+
+const title = "Zepplin";
+
+// en caso de astro, con poner el fetch directamente sería suficiente
+const resp = await fetch("https://pokeapi.co/api/v2/pokemon");
+const data = (await resp.json()) as PokemonListResponse;
+---
+
+<Main title={title}>
+  <Title>Home</Title>
+  <section
+    aria-label="Listado de pokemons"
+    class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-9"
+  >
+    {
+      data.results.map((pokemon) => (
+        // <li>{pokemon.name}</li>
+        <PokemonCard name={pokemon.name} url={pokemon.url} />
+      )) /* no nos hace falta el key porque al ser contenido estático 'no se puede mover' */
+    }
+  </section>
+</Main>

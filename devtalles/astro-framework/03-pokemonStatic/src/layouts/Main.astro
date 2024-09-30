@@ -1,0 +1,51 @@
+---
+import { ViewTransitions } from "astro:transitions";
+import { siteInfo } from "src/global/siteInfo";
+
+import Navbar from "@components/shared/Navbar.astro";
+
+const projectName = "Zeppling Project";
+
+interface Props {
+  title?: string;
+  image?: string;
+  description?: string;
+}
+
+const {
+  title = siteInfo.title,
+  description = siteInfo.description,
+  image,
+} = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/zepplin_favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <!-- SEO -->
+    <meta name="description" content={description} />
+    <meta name="author" content={`Chema F. - mrjark`} />
+    <!-- OG Metatags -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+
+    <title>{projectName}</title>
+    <ViewTransitions />
+    <!-- esta forma siguiente es hacer los viewtransitions sin JS desde el CSS, por ende, el sitio puede ir más rápido -->
+    <!-- <style>
+      @view-transition {
+        navigation: auto; /* enabled! */
+      }
+    </style> -->
+  </head>
+  <body class="bg-zinc-800 text-gray-100">
+    <Navbar />
+    <main class="mt-10 m-auto max-w-3xl">
+      <slot />
+    </main>
+  </body>
+</html>

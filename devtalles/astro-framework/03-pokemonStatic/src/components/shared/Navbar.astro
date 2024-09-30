@@ -1,0 +1,52 @@
+---
+const links = [
+  { href: "/", text: "Home" },
+  { href: "/pokemons/1", text: "List" },
+  { href: "/favorites", text: "Favorites" },
+  { href: "/islands", text: "Islands" },
+];
+
+// esto te permite saber en que ruta estás
+const currentPath = Astro.url.pathname;
+---
+
+<!-- component -->
+<nav class="bg-zinc-800">
+  <section
+    class="container flex items-center justify-center p-6 mx-auto text-gray-600 capitalize dark:text-gray-300"
+  >
+    {
+      links.map((links) => (
+        <div>
+          <a class="text-gray-200 text-lg  mx-1.5 sm:mx-6" href={links.href}>
+            {links.text}
+          </a>
+          {/* esto es para la transición bonita (sinJS) y a su vez que no se vea un salto raro ya que siempre está el borde pero está transparent */}
+          {currentPath === links.href ? (
+            <div
+              transition:name="menu-line"
+              class="border-b-2 border-yellow-500 mx-4"
+            />
+          ) : (
+            <div class="border-b-2 border-transparent" />
+          )}
+        </div>
+      ))
+    }
+    <!-- {
+      links.map((links) => (
+        <a
+          class:list={[
+            "text-gray-200 text-lg  mx-1.5 sm:mx-6",
+            currentPath === links.href && "border-b-2 border-yellow-500",
+            // currentPath === links.href ? "border-b-2 border-yellow-500" : '', todas estas son formas distintas de decir lo mismo
+            // {'border-b-2 border-yellow-500' : currentPath === links.href},
+          ]}
+          href={links.href}
+        >
+          {links.text}
+        </a>
+      ))
+    } -->
+  </section>
+</nav>

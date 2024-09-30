@@ -1,0 +1,70 @@
+---
+import type { GetStaticPaths } from "astro";
+import { Image } from "astro:assets";
+
+import { siteConfig } from "src/config/siteConfig";
+import TypedBlogPost from "@blog/TypedBlogPost.astro";
+import Main from "@layouts/Main.astro";
+import { getCollection } from "astro:content";
+import Title from "@shared/Title.astro";
+
+// caso especial, aquí tengo que devolver ambas cosas y mi reto era que son sabía como hacerlo con un solo return
+export const getStaticPaths = (async () => {
+  // si puede de esta manera o de la de abajo, qeu es más sencilla y en una sola línea
+  // const blogPost = await getCollection("blog");
+  // const authors = await getCollection("author");
+
+  const [authors, posts] = await Promise.all([
+    getCollection("author"),
+    getCollection("blog"),
+  ]);
+
+  return authors.map((author) => ({
+    params: { author: author.id },
+    props: {
+      blogPost: posts.filter((post) => post.data.author.id === author.id), // el author de aquí es el que estás iterando en el .map
+      author: author.data,
+    },
+  }));
+}) satisfies GetStaticPaths;
+
+const { blogPost, author } = Astro.props;
+---
+
+<Main>
+  <article class="">
+    <section class="container px-6 py-10 mx-auto pb-5">
+      <Title>{siteConfig.title}</Title>
+
+      <section
+        class="text-md text-gray-400 mb-0 flex flex-row justify-between mt-5"
+      >
+        <div class="flex flex-row">
+          <Image
+            class="rounded-full"
+            src={author.avatar}
+            alt={author.name}
+            width={50}
+            height={50}
+          />
+
+          <div class="flex flex-col ml-5">
+            <a>{author.name}</a>
+            <span>Listado de todos mis posts</span>
+          </div>
+        </div>
+        <a class="text-teal-400 underline italic mt-2" href="/">Go Home</a>
+      </section>
+
+      <div class="grid grid-cols-1 gap-8 mt-8 md:mt-16 md:grid-cols-2">
+        {blogPost.map((post) => <TypedBlogPost post={post} />)}
+      </div>
+    </section>
+  </article>
+</Main>
+
+<style is:global>
+  a {
+    @apply text-yellow-500 hover:underline;
+  }
+</style>

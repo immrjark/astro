@@ -1,0 +1,48 @@
+---
+import { Image } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  post: CollectionEntry<"blog">;
+}
+
+import { Formatter } from "@utils/formater";
+
+const { post } = Astro.props;
+const frontmatter = post.data;
+---
+
+<article class="lg:flex">
+  <div class="">
+    <!-- 
+    Para trabajar con los formatos nuevos de las imagenes y poder modificarlas, tienes que usar el componente Image de astro
+    <img
+      class="object-cover w-full h-auto rounded-lg"
+      src={frontmatter.image}
+      alt={frontmatter.title}
+    /> -->
+    <Image
+      class="object-cover w-full h-auto rounded-lg"
+      src={frontmatter.image}
+      alt={frontmatter.title}
+      width={500}
+      height={500}
+      quality="low"
+      loading="lazy"
+      transition:name={`${post.slug}-image`}
+    />
+
+    <div class="flex flex-col justify-between py-6">
+      <a
+        href={`/posts/${post.slug}`}
+        class="text-xl font-semibold text-gray-800 hover:underline dark:text-white"
+      >
+        {frontmatter.description}
+      </a>
+
+      <span class="text-sm text-gray-500 dark:text-gray-300"
+        >{Formatter.formatDate(frontmatter.date)}</span
+      >
+    </div>
+  </div>
+</article>

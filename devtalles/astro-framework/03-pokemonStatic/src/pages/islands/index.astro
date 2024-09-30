@@ -1,0 +1,38 @@
+---
+import { Counter } from "@components/others/Counter.tsx";
+
+import Title from "@components/shared/Title.astro";
+import Main from "../../layouts/Main.astro";
+
+const counterValue = 20;
+---
+
+<Main title="favorite">
+  <Title>Islands</Title>
+
+  <div style={{ height: "2000px", backgroundColor: "#eab308" }}></div>
+  <!-- Ambos son para las islas <Counter client:only="'solid-js" /> -->
+  <Counter
+    transition:persist-props
+    transition:persist="counterValue"
+    initialValue={counterValue}
+    client:visible
+  >
+    <Title>Counter Island</Title>
+  </Counter>
+</Main>
+
+<script>
+  //para la hidratación y las directicas apra que funionen las islas es esta página: https://docs.astro.build/en/reference/directives-reference/#client-directives
+</script>
+<script>
+  // con el transition persist y el valor del nombre, puedes decirle a astro que es el mismo componente y por ende, mantener el valor entre ambos
+  /**
+   *  con el transition persist y el valor del nombre, puedes decirle a astro que es el mismo componente
+   * y por ende, mantener el valor entre ambos.
+   * Además, para mantener las mismas props en ambos componentes aunque sean distintas props
+   * con la propiedad transition:persist-props en ambos componentes es como decirle a astro que ambos son iguales y que no haga
+   * un salto si son distintos valores de conunter value
+   * para la hidratación y las directicas apra que funionen las islas es esta página: https://docs.astro.build/en/reference/directives-reference/#client-directives
+   */
+</script>

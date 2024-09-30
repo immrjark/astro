@@ -1,0 +1,61 @@
+---
+import type { GetStaticPaths } from "astro";
+import Main from "../../layouts/Main.astro";
+import type { PokemonListResponse } from "../../interfaces/pokemon-list-response";
+import PokemonCard from "src/components/pokemon/PokemonCard.astro";
+
+// Esto es para crear las rutas estáticas espsonalizdas.
+// Los params en este caso son los fragmentos de url que son 'dinámicos' y las props son las que tiene el propio elemento
+// forma async y automática de generar las páginas
+export const getStaticPaths = (async () => {
+  const resp = await fetch(" https://pokeapi.co/api/v2/pokemon?limit=151");
+  const { results } = (await resp.json()) as PokemonListResponse; // el results es la respuesta de la llamada a la URL. No es un nombre inventado. y es donde vienen todos los pokemon, los 151
+  // console.log("hola mundo", results);
+
+  return results.map((results) => ({
+    params: { name: results.name },
+    props: { name: results.name, url: results.url },
+  }));
+}) satisfies GetStaticPaths;
+// forma manual de generar las páginas
+// export const getStaticPaths = (() => {
+//   return [
+//     {
+//       params: { name: "bulbasaur" },
+//       props: { url: "https://pokeapi.co/api/v2/pokemon/1/" },
+//     },
+//     {
+//       params: { name: "charmander" },
+//       props: { url: "https://pokeapi.co/api/v2/pokemon/4/" },
+//     },
+//   ];
+// }) satisfies GetStaticPaths;
+
+// con Astro.params puedes conseguir el nombre que has sacado en los getStaticPaths
+const { name } = Astro.params;
+const { url } = Astro.props; // de aquí también puedo sacar el name
+
+const id = url.split("/").at(-2);
+const audioSrc = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${id}.ogg`;
+const imageSrc = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+---
+
+<Main
+  title={`Pokemon ${name} - #${id} `}
+  description={`Información sobre ${name}`}
+  image={imageSrc}
+>
+  <section class="flex flex-col justify-center items-center mt-10 mx-10">
+    <h1 class="text-5xl capitalize">{name}</h1>
+    <section class="flex flex-row text-center items-center gap-4">
+      <span class="text-xl text-slate-200">Its ID: {id}</span>
+      <span><a class="text-pink-400 underline" href="/">Go Home</a></span>
+    </section>
+    <PokemonCard name={name} url={`${url}`} isBig={true} />
+    <audio controls class="mt-10">
+      <source src={audioSrc} type="audio/ogg" />
+      Your brawser does not support tha audio element
+    </audio>
+  </section>
+</Main>
+{/* https://pokeapi.co/api/v2/pokemon?limit=151 */}

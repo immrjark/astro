@@ -1,0 +1,140 @@
+---
+import Title from "@shared/Title.astro";
+import Main from "@layouts/Main.astro";
+import Image from "astro/components/Image.astro";
+
+import post05 from "@images/post-05.png";
+import { Picture } from "astro:assets";
+---
+
+<Main>
+  <Title>Images</Title>
+  <img
+    loading="eager"
+    src="/assets/images/post-05.png"
+    alt="image"
+    width="250"
+    height="250"
+  />
+  <p class="text-yellow-300">Imagen sin astro ☝🏽</p>
+  <p>
+    En las imgs, en los navegadores, tienen una propiedad que es `loading` que
+    por defecto está en 'eager' que es en el momento que se carge la página pero
+    hay otra que es 'lazy' que hasta que no se llega al contenido, no se carga,
+    es el Lazymode. OJO, al inicio hace un pre fetch no es la carga de la misma
+  </p>
+  <p class="text-yellow-300">Imagen con astro 👇🏽</p>
+  <Image
+    src="/assets/images/post-05.png"
+    alt="image"
+    width="250"
+    height="250"
+  />
+  <Image
+    src="/assets/images/post-05.png"
+    alt="image"
+    width="250"
+    height="250"
+  />
+  <p>este de aquí abajo se usa para coger elementos de la carpeta public</p>
+  <p>
+    Más información, <a
+      target="_blank"
+      class="text-teal-500 underline italic"
+      href="https://docs.astro.build/en/guides/images/">here</a
+    >
+  </p>
+  <div class="my-20 border-yellow-200 border-b-2"></div>
+  <p>
+    Con el path relativo de la carpteda que está en el proyecto dentro del src y
+    si ves en la network, tanto el formato de la imagen como el peso de la misma
+    cambia
+  </p>
+  <Image src={post05} alt="image" width="250" height="250" />
+  <p>
+    Estas imágenes de astro además tienen las propiedades format y quality para
+    cambiar el formato dependiendo del que quieres que tome y la calidad que
+    quieras
+  </p>
+  <div class="my-20 border-yellow-200 border-b-2"></div>
+  <div class="flex flex-col">
+    <h2 class="border-b-2 border-yellow-500 w-48 mb-2">
+      Image con baja calidad
+    </h2>
+    <Image quality="low" src={post05} alt="image" width="250" height="250" />
+  </div>
+  <div class="flex flex-col mt-12">
+    <h2 class="border-b-2 border-yellow-500 w-48 mb-2">
+      Image con alta calidad
+    </h2>
+    <Image quality="high" src={post05} alt="image" width="250" height="250" />
+  </div>
+  <div class="flex flex-col mt-12">
+    <h2 class="border-b-2 border-yellow-500 w-48 mb-2">
+      Image con formato webp
+    </h2>
+    <Image format="webp" src={post05} alt="image" width="250" height="250" />
+  </div>
+  <div class="flex flex-col mt-12">
+    <h2 class="border-b-2 border-yellow-500 w-48 mb-2">
+      Image con formato jpeg
+    </h2>
+    <Image format="jpeg" src={post05} alt="image" width="250" height="250" />
+  </div>
+  <div class="my-20 border-yellow-200 border-b-2"></div>
+  <p>
+    Otro tipo de imagenes en astro son las 'Picture' que son aún más potentes
+    que las Images ya que estas pueden tener un formato dinámico dependiendo del
+    navegador pero estas siempre deberán estár en el proyecto y no en la carpeta
+    public ya que sino las construirá y tendrán ese formato por defecto y esta
+    propiedad se llama 'formats' y le puedes enviar un objeto con los distintos
+    formatos que quieres tener y de forma que se vayan creando según soporte o
+    no el navegador. Y tambien exite el format que hay en Image pero que no
+    puedes tener ese conjunto de formatos, sino que solo puedes uno. Además,
+    puede tener un width dinámico que se llama 'widths'.
+    <br />
+    <a
+      target="_blank"
+      class="text-teal-400 underline italic"
+      href="https://docs.astro.build/en/guides/images/#widths">Aquí más info</a
+    >
+  </p>
+  <div class="flex flex-col mt-12">
+    <h2 class="border-b-2 border-yellow-500 max-w-fit mb-2">
+      Picture con formato dinámico
+    </h2>
+    <Picture
+      formats={["avif", "webp", "png"]}
+      src={post05}
+      alt="image"
+      width="250"
+      height="250"
+    />
+  </div>
+  <div class="flex flex-col mt-12">
+    <h2 class="border-b-2 border-yellow-500 max-w-fit mb-2">
+      Picture con width dinámico
+    </h2>
+    <Picture
+      formats={["avif", "webp", "png"]}
+      src={post05}
+      alt="image"
+      sizes={`(max-width: 360px) 240px, (max-width: 720px) 540px, (max-width: 1600px) 720px, ${post05.width}px`}
+      widths={[240, 540, 720, post05.width]}
+    />
+  </div>
+  <div
+    style={{
+      height: "3000px",
+    }}
+  >
+  </div>
+
+  <img
+    loading="lazy"
+    src="/assets/images/post-05.png"
+    alt="image"
+    width="250"
+    height="250"
+  />
+</Main>
