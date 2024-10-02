@@ -6,10 +6,10 @@
     Like this post
   </button>
   <button v-else @click="likePost">
-    <!-- <span>{{ likeCount }}</span> -->
+    <span>{{ likeCount }}</span>
     Like 
   </button>
-  {{ likeClicks }}
+  <!-- {{ likeClicks }} -->
 </template>
 
 +
