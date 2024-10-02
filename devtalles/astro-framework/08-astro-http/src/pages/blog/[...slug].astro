@@ -3,7 +3,7 @@ import { type CollectionEntry, getCollection } from "astro:content";
 import BlogPost from "../../layouts/BlogPost.astro";
 
 // import LikeBtn from "@components/likes/LikeBtn.vue";
-import LikeBtnActions from "@components/likes/LikeBtnActions.vue";
+import LikeBtnAction from "@components/likes/LikeBtnAction.vue";
 
 export const prerender = true; // esto generará las páginas de manera estática, lo que llevará a que el contador de likes no funcionara por ende, tienes que mandar de alguna manera a vue que haga el contador y eso lo voy a hacer a travñes del id
 
@@ -22,7 +22,7 @@ const { Content } = await post.render();
 
 <BlogPost {...post.data}>
   <div style={{ height: "50px" }}>
-    <LikeBtnActions postId={post.id} client:only="vue" />
+    <LikeBtnAction postId={post.id} client:only="vue" />
   </div>
   <Content />
 </BlogPost>

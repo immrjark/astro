@@ -6,10 +6,10 @@
     Like this post
   </button>
   <button v-else @click="likePost">
-    <!-- <span>{{ likeCount }}</span> -->
+    <span>{{ likeCount }}</span>
     Like 
   </button>
-  {{ likeClicks }}
+  <!-- {{ likeClicks }} -->
 </template>
 
 +
@@ -34,13 +34,18 @@ import { actions } from 'astro:actions';
 
   watch(likeCount, debounce(() => {
     // console.log('New like');
-    fetch(`/api/posts/likes/${props.postId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({likes: likeClicks.value})
+    // fetch(`/api/posts/likes/${props.postId}`, {
+    //   method: 'PUT',
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   },
+    //   body: JSON.stringify({likes: likeClicks.value})
+    // })
+    actions.updatePostLikes({
+      postId: props.postId,
+      likes: likeClicks.value
     })
+    likeClicks.value = 0
   }, 500) )
 
   const likePost = () => {
@@ -59,8 +64,9 @@ import { actions } from 'astro:actions';
   }
 
   const getCurrentLikes = async () => {
-    const resp = await actions.getPostLikes(props.postId)
-    console.log({resp});
+    const {likes} = await actions.getPostLikes(props.postId)
+    // console.log({resp});
+    // const { likes } = resp.data
     
     // const resp = await fetch(`/api/posts/likes/${props.postId}`)
     // // console.log(resp);
@@ -70,6 +76,8 @@ import { actions } from 'astro:actions';
     // const data = await resp.json()
     // console.log(data);
     // likeCount.value = data.likes
+
+    likeCount.value = likes
     isLoading.value = false
     
   }
