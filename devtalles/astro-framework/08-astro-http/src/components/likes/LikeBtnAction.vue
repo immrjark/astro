@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div v-if="isLoading">
     Loading....
   </div>
@@ -13,7 +13,7 @@
 </template>
 
 +
-<script lang="ts" setup>
+<!-- <script lang="ts" setup> -->
 import { ref, watch } from 'vue';
 import confetti from 'canvas-confetti'
 import debounce from 'lodash.debounce' // solo tienes que envolver con el debounde la función que queires que actue así y listo -> debounde()
@@ -84,8 +84,8 @@ import { actions } from 'astro:actions';
 
   getCurrentLikes()
 
-</script>
-<style scoped>
+<!-- </script> -->
+<!-- <style scoped> -->
   button {
     background-color: #eab308;
     color: black/80;
@@ -101,4 +101,4 @@ import { actions } from 'astro:actions';
     background-color: #c1950f;
     
   }
-</style>
+<!-- </style> --> 
