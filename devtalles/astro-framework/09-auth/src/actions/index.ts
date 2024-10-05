@@ -1,8 +1,7 @@
-import { signupUser } from "./auth";
-
+import { signUpUser } from "./auth"
 export const server = {
   // exportacion de actions
 
   //Authentication
-  signupUser
+  signUpUser
 }

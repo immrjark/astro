@@ -1,6 +1,10 @@
 ---
 import CopyrightAndDate from "@/components/shared/CopyrightAndDate.astro";
 import AuthLayout from "@/layoputs/AuthLayout.astro";
+
+const email = Astro.cookies.get("email")?.value ?? ""; // con esto puedo recuperar con astro el email que he guardado en la cookie
+// console.log(email);
+const rememberMe = !!email; // para transformarlo a valor boolean -> si existe dará true y sino false
 ---
 
 <AuthLayout>
@@ -28,6 +32,7 @@ import AuthLayout from "@/layoputs/AuthLayout.astro";
             class="w-full text-base px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400"
             type="email"
             name="email"
+            value={email}
             placeholder="mail@gmail.com"
           />
         </div>
@@ -48,6 +53,7 @@ import AuthLayout from "@/layoputs/AuthLayout.astro";
               id="remember_me"
               name="remember_me"
               type="checkbox"
+              checked={rememberMe}
               class="h-4 w-4 bg-blue-500 focus:ring-blue-400 border-gray-300 rounded"
             />
             <label for="remember_me" class="ml-2 block text-sm text-gray-800">
@@ -60,15 +66,14 @@ import AuthLayout from "@/layoputs/AuthLayout.astro";
             </a>
           </div>
         </div>
-        <div>
-          <button
-            type="submit"
-            id="btn-submit"
-            class="disabled:bg-gray-300 w-full flex justify-center bg-green-500 hover:bg-green-500 text-gray-100 p-3 rounded-full tracking-wide font-semibold shadow-lg cursor-pointer transition ease-in duration-500"
-          >
-            Sign in
-          </button>
-        </div>
+
+        <button
+          type="submit"
+          id="btn-submit"
+          class="disabled:bg-gray-300 w-full flex justify-center bg-green-500 hover:bg-green-500 text-gray-100 p-3 rounded-full tracking-wide font-semibold shadow-lg cursor-pointer transition ease-in duration-500"
+        >
+          Sign in
+        </button>
       </form>
       <CopyrightAndDate />
     </div>
@@ -86,9 +91,9 @@ import AuthLayout from "@/layoputs/AuthLayout.astro";
     btnSubmit.setAttribute("disabled", "disabled");
 
     const formData = new FormData(form);
-    const resp = await actions.signupUser(formData);
-
+    const resp = await actions.signUpUser(formData);
     const { data, error } = resp;
+
     if (error) {
       console.log(error.message);
     }
