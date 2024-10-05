@@ -82,6 +82,7 @@ const rememberMe = !!email; // para transformarlo a valor boolean -> si existe d
 
 <script>
   import { actions } from "astro:actions";
+  import Swal from "sweetalert2"; // package para manejar los errores instalado a través de 'bun i sweetalert2'
 
   const form = document.querySelector("form") as HTMLFormElement;
   const btnSubmit = document.querySelector("#btn-submit") as HTMLButtonElement;
@@ -95,9 +96,16 @@ const rememberMe = !!email; // para transformarlo a valor boolean -> si existe d
     const { data, error } = resp;
 
     if (error) {
-      console.log(error.message);
-    }
+      Swal.fire({
+        icon: "error",
+        title: "Credentials are not correct",
+        text: error.message,
+      });
+      // console.log(error.message);
 
-    btnSubmit.removeAttribute("disabled");
+      btnSubmit.removeAttribute("disabled");
+      return;
+    }
+    window.location.replace("/private"); // esto es para que cuando lo rellene le cambie de pantalla y lo lleve a la privada y no te deja volver a la pantalla anterior (signup) gracias al .replace
   });
 </script>
