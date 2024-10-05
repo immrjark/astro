@@ -15,7 +15,7 @@
       <li class="font-semibold text-gray-700">
         <a href="/signup">Sign Up</a>
       </li>
-      <li class="font-semibold text-gray-700">
+      <li id="logout" class="font-semibold text-gray-700">
         <a href="
         #">Sign out</a>
       </li>
@@ -74,3 +74,14 @@
     </ul>
   </div>
 </nav>
+
+<script>
+  import { actions } from "astro:actions";
+
+  const logoutElement = document.querySelector("#logout") as HTMLLinkElement;
+  logoutElement?.addEventListener("click", () => {
+    actions.logOutUser();
+
+    window.location.href = "/"; // con el .href y no el .replace() permites al users si da marcha atrás, poder volver a la pantalla anterior
+  });
+</script>
