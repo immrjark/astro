@@ -2,7 +2,7 @@ import { defineAction } from "astro:actions";
 import { z } from "astro:content";
 
 import { firebase } from "@/firebase/config";
-import { createUserWithEmailAndPassword, type AuthError } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile, type AuthError } from "firebase/auth";
 
 export const signUpUser = defineAction({
   accept: 'form',
@@ -31,13 +31,24 @@ export const signUpUser = defineAction({
       })
     }
     
-    // USERS CREATIONS
+    // USERS SIGIN
     try { // siemrpe que algo puede salir mal, debe haber un trycatch
       const user = await createUserWithEmailAndPassword(firebase.auth , email, password) // con esto tienes la info del users
       
-      // Actualizar el nombres (display name)
+      // esto es para que no salte el error del displayName pero sabes que si o si va a haber un user porque de eso es la verificación
+      if(!firebase.auth.currentUser) {
+        return
+      }
 
-      // Verificar el corre
+      // Actualizar el nombres (display name)
+      updateProfile(firebase.auth.currentUser, {
+        displayName: name
+      })
+
+      // Verificar el correo
+      await sendEmailVerification(firebase.auth.currentUser, {
+        url: 'http://localhost:4321/private?emailVeified=true', // esta es la url que va a llevar al usuario una vez haya entrado en su correo y lo haya verificado. Te interesa llevarlo a donde estaba anteriormente o donde quiera que tenga que llevar la verificación
+      }) // el ? es un queryString que simplemente es para cogerlo si es que hace falta pero es por poner algo más allá del /private
 
       return {
         uid: user.user.uid,

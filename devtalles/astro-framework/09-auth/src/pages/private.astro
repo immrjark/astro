@@ -8,6 +8,7 @@ if (firebaseUser === null) {
 	return Astro.redirect("/login");
 }
 
+await firebaseUser.reload();
 const { displayName, email, photoURL, emailVerified } = firebaseUser;
 
 const name = displayName ?? "No display Name";
@@ -36,7 +37,12 @@ const name = displayName ?? "No display Name";
 			}
 			<div class="text-center mt-2 text-3xl font-medium">{name}</div>
 			<div class="text-center mt-2 font-light text-sm">{email}l</div>
-			<div class="text-center font-normal text-lg text-red-600 my-4">
+			<div
+				class:list={[
+					"text-center font-normal text-lg",
+					emailVerified ? "text-green-500" : "text-red-500",
+				]}
+			>
 				{emailVerified ? "Email Verified" : " Email no verified"}
 			</div>
 			<div class="px-6 text-center mt-2 font-light text-sm">
