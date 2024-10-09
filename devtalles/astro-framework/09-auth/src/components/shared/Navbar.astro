@@ -78,7 +78,7 @@
 <script>
   import { actions } from "astro:actions";
 
-  const logoutElement = document.querySelector("#logout") as HTMLLinkElement;
+  const logoutElement = document.querySelector("#logout") as HTMLLIElement;
   logoutElement?.addEventListener("click", () => {
     actions.logOutUser();
 
