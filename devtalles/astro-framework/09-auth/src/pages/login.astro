@@ -63,8 +63,18 @@ const rememberMe = !!email; // para transformarlo a valor boolean -> si existe d
             type="submit"
             class="disabled:bg-gray-400 w-full flex justify-center bg-green-400 hover:bg-green-500 text-gray-100 p-3 rounded-full tracking-wide font-semibold shadow-lg cursor-pointer transition ease-in duration-500"
           >
-            Sign in!!
+            Sign in with email
           </button>
+          <div class="flex flex-1 w-full my-2">
+            <div class="w-full border-t-2 border-gray-500"></div>
+          </div>
+          <button
+            id="btn-google"
+            type="button"
+            class="disabled:bg-gray-400 w-full flex justify-center border-2 border-red-400 hover:border-red-700 text-neutral-800 p-3 rounded-full tracking-wide font-semibold shadow-lg cursor-pointer transition ease-in duration-500"
+          >
+            Sign in with Google</button
+          >
         </div>
       </form>
       <CopyrightAndDate />
@@ -73,11 +83,17 @@ const rememberMe = !!email; // para transformarlo a valor boolean -> si existe d
 >
 
 <script>
+  import { firebase } from "@/firebase/config";
   import { actions } from "astro:actions";
+  import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+  import { log } from "node_modules/astro/dist/core/logger/core";
   import Swal from "sweetalert2";
 
   const form = document.querySelector("form") as HTMLFormElement;
   const btnLogin = document.querySelector("#btn-login") as HTMLButtonElement;
+  const btnLoginGoogle = document.querySelector(
+    "#btn-google",
+  ) as HTMLButtonElement;
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -96,5 +112,35 @@ const rememberMe = !!email; // para transformarlo a valor boolean -> si existe d
       return;
     }
     window.location.replace("/private");
+  });
+
+  btnLoginGoogle.addEventListener("click", async () => {
+    btnLoginGoogle.setAttribute("disabled", "disabled");
+
+    const provider = new GoogleAuthProvider();
+
+    try {
+      // este signin es propio de firebase, por ende, si queires saber como se usa, tienes que aprender a usar firebase
+      // Paso 1: obtener las credenciales del lado del cliente
+      const credentials = await signInWithPopup(firebase.auth, provider);
+      // console.log("credential:", credentials);
+
+      // paso 2: verificar las credenciales en el lado del backend
+      // este paso es importate porque con esto haces que el usuario tenga que entrar a su correo y verificar lo que hace que sea más dificil suplantar la identidad
+      const { error } = await actions.loginWithGoogle(credentials);
+
+      if (error) {
+        alert(error.message);
+        btnLoginGoogle.removeAttribute("disabled");
+        return;
+      }
+
+      btnLoginGoogle.innerText = "Redirecting...";
+      window.location.replace("/private");
+    } catch (error) {
+      console.log(error);
+    }
+
+    btnLoginGoogle.removeAttribute("disabled");
   });
 </script>
