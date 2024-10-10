@@ -9,12 +9,12 @@ const apiKey = import.meta.env.API_KEY
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDmv11ufIAFqJqTz6ojVjLKNbMhVspll9k",
-  authDomain: "astro-authentication-d4cdb.firebaseapp.com",
-  projectId: "astro-authentication-d4cdb",
-  storageBucket: "astro-authentication-d4cdb.appspot.com",
-  messagingSenderId: "617102496520",
-  appId: "1:617102496520:web:9849c304ed5a0885e7d2bd"
+  apiKey: `${import.meta.env.API_KEY}`,
+  authDomain: `${import.meta.env.AUTH_DOMAIN}`,
+  projectId:`${import.meta.env.PROJECT_ID}`,
+  storageBucket: `${import.meta.env.STOREAGE_BUCKET}`,
+  messagingSenderId: `${import.meta.env.MESSAGING_SENDER_ID}`,
+  appId: `${import.meta.env.APP_ID}`
 };
 
 // Initialize Firebase

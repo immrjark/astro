@@ -47,7 +47,7 @@ export const signUpUser = defineAction({
 
       // Verificar el correo
       await sendEmailVerification(firebase.auth.currentUser, {
-        url: 'http://localhost:4321/private?emailVeified=true', // esta es la url que va a llevar al usuario una vez haya entrado en su correo y lo haya verificado. Te interesa llevarlo a donde estaba anteriormente o donde quiera que tenga que llevar la verificación
+        url: `${import.meta.env.BASE_URL}/private?emailVeified=true`, // esta es la url que va a llevar al usuario una vez haya entrado en su correo y lo haya verificado. Te interesa llevarlo a donde estaba anteriormente o donde quiera que tenga que llevar la verificación
       }) // el ? es un queryString que simplemente es para cogerlo si es que hace falta pero es por poner algo más allá del /private
 
       return {

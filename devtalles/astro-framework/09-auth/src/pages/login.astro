@@ -86,7 +86,6 @@ const rememberMe = !!email; // para transformarlo a valor boolean -> si existe d
   import { firebase } from "@/firebase/config";
   import { actions } from "astro:actions";
   import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-  import { log } from "node_modules/astro/dist/core/logger/core";
   import Swal from "sweetalert2";
 
   const form = document.querySelector("form") as HTMLFormElement;
