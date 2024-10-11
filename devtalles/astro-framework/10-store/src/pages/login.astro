@@ -96,25 +96,38 @@ import AuthLayout from "@/layouts/AuthLayout.astro";
   const btnSubmit = document.querySelector("#btn-submit") as HTMLButtonElement;
   const bntGoogle = document.querySelector("#btn-google") as HTMLButtonElement;
 
+  const { signIn } = await import("auth-astro/client");
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     btnSubmit.setAttribute("disabled", "disabled");
 
     const formData = new FormData(form);
 
-    const { error } = await actions.loginUser(formData);
+    // const { error } = await actions.loginUser(formData);
 
-    if (error) {
+    const resp = await signIn("credentials", {
+      // el email y passwrod es lo que tienes en los names de los inputs del form
+      email: formData.get("email") as string,
+      password: formData.get("password") as string,
+      redirect: false,
+    });
+
+    console.log(resp);
+
+    if (resp) {
       Swal.fire({
         icon: "error",
         title: "Error al ingresar",
-        text: error.message,
+        // text: error.message,
+        text: "User or passwords are incorrect",
       });
       btnSubmit.removeAttribute("disabled");
       return;
     }
 
-    window.location.replace("/protected");
+    // TODO:
+    window.location.replace("/");
   });
 
   bntGoogle.addEventListener("click", async () => {
@@ -132,7 +145,7 @@ import AuthLayout from "@/layouts/AuthLayout.astro";
       }
 
       bntGoogle.innerText = "Redireccionando...";
-      window.location.replace("/protected");
+      window.location.replace("/private");
     } catch (error) {
       console.log(error);
       bntGoogle.removeAttribute("disabled");
