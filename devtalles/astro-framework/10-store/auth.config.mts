@@ -1,4 +1,5 @@
 // import GitHub from '@auth/core/providers/github';
+import type { AdapterUser } from '@auth/core/adapters';
 import Credentials from '@auth/core/providers/credentials';
 import { db, eq, User } from 'astro:db';
 import { defineConfig } from 'auth-astro';
@@ -31,9 +32,23 @@ export default defineConfig({
         }
         
         const {password: _, ...rest} = user // porque como no quieres devolver la contraseña, la sacas aquí
-
         return rest
       }
     })
   ],
+
+  callbacks: {
+    jwt: ({token, user}) => {
+      if(user) {
+        token.user = user // creo en el token el user para ir a la session y a través del token porder sacar al user
+      }
+      return token;
+    },
+    session:  ({session, token}) => {
+      session.user = token.user as AdapterUser
+      console.log({SessionUser: session.user});
+      
+      return session;
+    }
+  }
 });
