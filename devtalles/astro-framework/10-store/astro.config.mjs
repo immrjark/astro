@@ -10,7 +10,7 @@ import auth from 'auth-astro';
 
 // https://astro.build/config
 export default defineConfig( {
-  integrations: [tailwind(), db(), auth()],
-  output: 'hybrid',
+  integrations: [ tailwind(), db(), auth() ],
+  output: 'server',
   adapter: netlify()
 } );

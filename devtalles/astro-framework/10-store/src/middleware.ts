@@ -1,4 +1,5 @@
 import { defineMiddleware } from "astro/middleware";
+import {getSession} from 'auth-astro/server'
 
 const notAuthenticatedRoutes = ['/login', '/register'];
 
