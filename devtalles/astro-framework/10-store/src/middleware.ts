@@ -13,6 +13,7 @@ export const onRequest = defineMiddleware(
     // TODO:
     locals.isLoggedIn = isLoggedIn;
     locals.user = null;
+    locals.isAdmin = false
 
     if (user) {
       // TODO:
@@ -22,11 +23,11 @@ export const onRequest = defineMiddleware(
         name: user.name!,
 
       };
-      // locals.isAdmin = user.role === 'admin'
+      locals.isAdmin = user.role === 'admin' // esta linea no da error porque he extendido las properties que vienen por defecto en authjs, que es añadiendo el user. Esto está en auth.d.ts
     }
 
     // TODO: Eventualmente tenemos que controlar el acceso por roles
-    if (!isLoggedIn && url.pathname.startsWith('/dashboard')) {
+    if (!locals.isAdmin && url.pathname.startsWith('/dashboard')) {
       return redirect('/');
     }
 

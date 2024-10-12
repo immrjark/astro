@@ -40,13 +40,14 @@ export default defineConfig({
   callbacks: {
     jwt: ({token, user}) => {
       if(user) {
+        //puedes alterar el token
         token.user = user // creo en el token el user para ir a la session y a través del token porder sacar al user
       }
       return token;
     },
     session:  ({session, token}) => {
       session.user = token.user as AdapterUser
-      console.log({SessionUser: session.user});
+      console.log({SessionUser: session.user}); // se ve todo menos la contraseña gracias al return del user quitando la password
       
       return session;
     }
