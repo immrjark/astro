@@ -1,4 +1,5 @@
-import { defineAction } from 'astro:actions';
+import { defineAction } from "astro:actions";
+import { z } from "astro:content";
 
 
 export const loginUser = defineAction({
@@ -7,7 +8,7 @@ export const loginUser = defineAction({
     email: z.string().email(),
     password: z.string().min(6),
   }),
-  handler: async ({ email, password }, { cookies }) => {
+  handler: async (input, context) => {
     return { ok: true };
   },
 });
