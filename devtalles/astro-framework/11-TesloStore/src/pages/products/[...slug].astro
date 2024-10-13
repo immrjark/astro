@@ -5,18 +5,18 @@ import { actions } from "astro:actions";
 
 const { slug } = Astro.params;
 const { data, error } = await actions.getProductsBySlug(slug ?? "");
+// console.log({ data });
 
 if (error) {
   return Astro.redirect("/404");
 }
 
 const { product, images } = data;
+// console.log();
 ---
 
 <!-- image={image} -->
 <MainLayout title={product.title} description={product.description}>
-  <h1>{product.title}</h1>
-
   <div class="grid grid-cols-1 md:grid-cols-3 w-full">
     <ProductSlideshow images={images} />
 
