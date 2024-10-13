@@ -12,6 +12,7 @@ export const getProductsByPage = defineAction({
   }),
   handler: async (input) => {
     const {limit, page} = input
+    // page = page <= 0 ? 1 : page;
 
     // las páginas no tienen que ser negativas y siempre tiene que haber un límite para que no muestre más allá
     const [totalRecords] = await db.select({count: count()}).from(Product);

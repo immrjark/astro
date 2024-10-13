@@ -6,12 +6,18 @@ import { actions } from "astro:actions";
 
 // const session = await getSession(Astro.request);
 // const { user } = session ?? {}; // porque puede ser nulo
-const elements = await actions.getProductsByPage({});
+const searchParams = Astro.url.searchParams;
+const pageParams = Number(searchParams.get("page") ?? 1);
+
+const elements = await actions.getProductsByPage({
+  page: pageParams,
+});
 const { data, error } = elements;
 
 if (error) {
   return Astro.redirect("/");
 }
+
 const { totalPages, products } = data;
 ---
 
