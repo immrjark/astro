@@ -18,5 +18,5 @@ const { totalPages, products } = data;
 <MainLayout>
   <h1 class="text-3xl">Product List</h1>
   <ProductList products={products} client:load />
-  <Pagination />
+  <Pagination totalPages={totalPages} />
 </MainLayout>

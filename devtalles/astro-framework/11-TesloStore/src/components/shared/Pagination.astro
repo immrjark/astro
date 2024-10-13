@@ -1,15 +1,33 @@
 ---
+interface Props {
+  totalPages: number;
+}
 
+const { props, url } = Astro;
+
+const pageParam = Number(url.searchParams.get("page") ?? 1);
+const currentPage = Math.max(
+  pageParam > props.totalPages ? props.totalPages : (pageParam ?? 1),
+); // para que no se pase de la paginación, es decir, si existen 6 páginas que no pueda poner 10 y que Math.max que no ponga una pagina negativa de ahí el 1
+
+const path = url.pathname;
 ---
 
-<section class="flex justify-between my-20 items-center">
-  <a class="btn-pagination" href="">Previous</a>
-  <span>Page 1 of [x]</span>
-  <a class="btn-pagination" class="" href="">Next</a>
+<section class="flex justify-between my-20 items-center text-center">
+  <a
+    class="btn-pagination"
+    href={`${path}?page=${Math.max(currentPage - 1, 1)}`}>Previous</a
+  >
+  <span>{currentPage} of {props.totalPages}</span>
+  <a
+    class="btn-pagination"
+    class=""
+    href={`${path}?page=${Math.min(currentPage + 1, props.totalPages)}`}>Next</a
+  >
 </section>
 
 <style>
   .btn-pagination {
-    @apply p-2 bg-slate-700 text-slate-100 rounded-full py-1 px-4;
+    @apply p-2 bg-slate-700 text-slate-100 rounded-full py-1 px-4 w-24;
   }
 </style>
