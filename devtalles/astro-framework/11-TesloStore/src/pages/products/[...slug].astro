@@ -53,6 +53,8 @@ const { product, images } = data;
 </MainLayout>
 
 <script>
+  import { CartCookiesClient } from "@/utils/cartCookies";
+
   const sizeElements = document.querySelectorAll("li");
 
   // esta función es para hacer activo la talla seleccionada
@@ -95,11 +97,19 @@ const { product, images } = data;
     }
     addToCardBtn.disabled = true;
 
-    console.log({
-      id: productIdInput.value,
+    CartCookiesClient.addItem({
+      // para añadir a las cookies
+      productId: productIdInput.value,
       size: size,
       quantity: quantity,
     });
+
+    // console.log({
+    //   id: productIdInput.value,
+    //   size: size,
+    //   quantity: quantity,
+    // });
+    window.location.href = "/cart";
   });
 </script>
 
