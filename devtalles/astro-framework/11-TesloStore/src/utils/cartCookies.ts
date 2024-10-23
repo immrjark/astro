@@ -5,7 +5,7 @@ export class CartCookiesClient {
   static getCart(): CartItem[] {
 
     const cart = JSON.parse(Cookies.get('cart') ?? '[]')
-    return[cart]
+    return cart
   }
 
   static addItem(cartItem: CartItem ): CartItem[] {
