@@ -53,6 +53,7 @@ const { product, images } = data;
 </MainLayout>
 
 <script>
+  import { itemInCart } from "@/store";
   import { CartCookiesClient } from "@/utils/cartCookies";
 
   const sizeElements = document.querySelectorAll("li");
@@ -95,9 +96,9 @@ const { product, images } = data;
     if (!size) {
       return alert("You need to select a size before");
     }
-    addToCardBtn.disabled = true;
+    // addToCardBtn.disabled = true;
 
-    CartCookiesClient.addItem({
+    const cart = CartCookiesClient.addItem({
       // para añadir a las cookies
       productId: productIdInput.value,
       size: size,
@@ -109,7 +110,9 @@ const { product, images } = data;
     //   size: size,
     //   quantity: quantity,
     // });
-    window.location.href = "/cart";
+    // window.location.href = "/cart";
+    itemInCart.set(cart.length);
+    // console.log(itemInCart.get());
   });
 </script>
 
