@@ -45,15 +45,19 @@ const fullImages = images.map((i) => {
 </style>
 
 <script>
+  // import { navigate } from "astro:transitions/client";
   import Swiper from "swiper";
   import { Pagination } from "swiper/modules";
 
-  const swiper = new Swiper(".swiper", {
-    // If we need pagination
-    pagination: {
-      el: ".swiper-pagination",
-    },
+  document.addEventListener("astro:page-load", () => {
+    const swiper = new Swiper(".swiper", {
+      // If we need pagination
+      pagination: {
+        el: ".swiper-pagination",
+      },
 
-    modules: [Pagination],
+      modules: [Pagination],
+    });
+    // navigate('/')
   });
 </script>

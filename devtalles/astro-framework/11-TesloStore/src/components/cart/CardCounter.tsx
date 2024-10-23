@@ -14,9 +14,12 @@ export const CartCounter = () => {
 
   return (
     <a href="/cart" className="relative inline-block">
+        {($itemsInCart > 0) && (
       <span className="absolute -top-2 -right-2 flex justify-center items-center bg-blue-500 text-white text-xs rounded-full w-5 h-5">
         {$itemsInCart}
-      </span>
+      </span>)
+        
+        }
       <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24">
         <g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5">
           <circle cx="9.549" cy="19.049" r="1.701"/>

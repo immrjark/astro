@@ -11,9 +11,9 @@ const { data: products, error } = await actions.loadProductsFromCart({
   cookies,
 });
 // console.log({ products });
-// if (error) {
-// esto es para que no de products undefined pero si lo pongo no me deja acceder al carrito porque da undefined y por ende, salta el error por tanto tengo que poner el ? en el map del product
-// return Astro.redirect("/");
+// if (error || !products) {
+//   // esto es para que no de products undefined pero si lo pongo no me deja acceder al carrito porque da undefined y por ende, salta el error por tanto tengo que poner el ? en el map del product
+//   return Astro.redirect("/");
 // }
 
 const total = products?.reduce(
@@ -64,16 +64,16 @@ const total = products?.reduce(
         <section>
           <div class="flex justify-between text-gray-400 mb-4">
             <span>SubTotal </span>
-            <span>{Formatter.currency(total!)}</span>
+            <span>{Formatter.currency(total ? total : 0)}</span>
           </div>
           <div class="flex justify-between text-gray-400 mb-4">
             <span>Tax </span>
-            <span>{Formatter.currency(total! * 0.15)}</span>
+            <span>{Formatter.currency(total ? total * 0.15 : 0)}</span>
           </div>
 
           <div class="flex justify-between text-xl font-bold">
             <span>Total</span>
-            <span>{Formatter.currency(total! * 1.15)}</span>
+            <span>{Formatter.currency(total ? total! * 1.15 : 0)}</span>
           </div>
         </section>
       </TotalItemsInCart>
@@ -82,21 +82,27 @@ const total = products?.reduce(
 </MainLayout>
 
 <script>
+  import { itemInCart } from "@/store";
   import { CartCookiesClient } from "@/utils";
+  import { navigate } from "astro:transitions/client";
 
-  const deleteBtn: NodeListOf<HTMLButtonElement> =
-    document.querySelectorAll(".btn-delete");
+  document.addEventListener("astro:page-load", () => {
+    // para que los view transition funcionen necesitas envolver l anavegación en el astro:page-load
+    const deleteBtn: NodeListOf<HTMLButtonElement> =
+      document.querySelectorAll(".btn-delete");
 
-  deleteBtn.forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      const target = e.target as HTMLButtonElement;
-      const productId = target.dataset.id ?? "";
-      const size = target.dataset.size ?? "";
+    deleteBtn.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const target = e.target as HTMLButtonElement;
+        const productId = target.dataset.id ?? "";
+        const size = target.dataset.size ?? "";
 
-      // console.log({ productId, size });
-      CartCookiesClient.removeItem(productId, size); // para eliminar el elemento del carrito
-
-      window.location.reload();
+        // console.log({ productId, size });
+        const cart = CartCookiesClient.removeItem(productId, size); // para eliminar el elemento del carrito
+        itemInCart.set(cart.length);
+        // window.location.reload();
+        navigate("/cart"); // par ala navegación entre pantalla de forma bonita
+      });
     });
   });
 </script>

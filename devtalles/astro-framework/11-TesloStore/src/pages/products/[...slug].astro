@@ -55,64 +55,75 @@ const { product, images } = data;
 <script>
   import { itemInCart } from "@/store";
   import { CartCookiesClient } from "@/utils/cartCookies";
+  import { navigate } from "astro:transitions/client";
 
-  const sizeElements = document.querySelectorAll("li");
+  document.addEventListener("astro:page-load", () => {
+    // necesito que esto esto envuelva todo por los ViewTransitions
+    const sizeElements = document.querySelectorAll("li");
 
-  // esta función es para hacer activo la talla seleccionada
-  sizeElements.forEach((liElement) => {
-    liElement.addEventListener("click", (event) => {
-      sizeElements.forEach((s) => s.classList.remove("selected-size"));
-      liElement.classList.add("selected-size");
-    });
-  });
+    // if (sizeElements.length === 0) {
+    //   return;
+    // }
 
-  const quatityInput = document.querySelector(
-    "#cuantity-input",
-  ) as HTMLInputElement;
-  const productIdInput = document.querySelector(
-    "#product-id",
-  ) as HTMLInputElement;
-
-  let quantity = 1; // para fijar seimpre la cantidad minima
-
-  const [decrementBtn, incrementBtn, addToCardBtn] =
-    document.querySelectorAll("button");
-
-  // función para añadir elementos al card pero como mucho 5 seguidos
-  incrementBtn.addEventListener("click", () => {
-    quantity = Math.min(quantity + 1, 5);
-    quatityInput.value = quantity.toString();
-  });
-
-  // función para eliminar elementos al card pero como mínimo siempre 1
-  decrementBtn.addEventListener("click", () => {
-    quantity = Math.max(quantity - 1, 1);
-    quatityInput.value = quantity.toString();
-  });
-
-  // add to card btn
-  addToCardBtn.addEventListener("click", () => {
-    const size = document.querySelector(".selected-size")?.textContent;
-    if (!size) {
-      return alert("You need to select a size before");
-    }
-    // addToCardBtn.disabled = true;
-
-    const cart = CartCookiesClient.addItem({
-      // para añadir a las cookies
-      productId: productIdInput.value,
-      size: size,
-      quantity: quantity,
+    // esta función es para hacer activo la talla seleccionada
+    sizeElements.forEach((liElement) => {
+      liElement.addEventListener("click", (event) => {
+        sizeElements.forEach((s) => s.classList.remove("selected-size"));
+        liElement.classList.add("selected-size");
+      });
     });
 
-    // console.log({
-    //   id: productIdInput.value,
-    //   size: size,
-    //   quantity: quantity,
-    // });
-    // window.location.href = "/cart";
-    itemInCart.set(cart.length);
-    // console.log(itemInCart.get());
+    const quantityInput = document.querySelector(
+      "#cuantity-input",
+    ) as HTMLInputElement;
+    const productIdInput = document.querySelector(
+      "#product-id",
+    ) as HTMLInputElement;
+
+    let quantity = 1; // para fijar seimpre la cantidad minima
+
+    const [decrementBtn, incrementBtn, addToCardBtn] =
+      document.querySelectorAll("button");
+
+    // función para añadir elementos al card pero como mucho 5 seguidos
+    incrementBtn.addEventListener("click", () => {
+      quantity = Math.min(quantity + 1, 5);
+      quantityInput.value = quantity.toString();
+    });
+
+    if (!incrementBtn || !quantityInput) return;
+
+    // función para eliminar elementos al card pero como mínimo siempre 1
+    decrementBtn.addEventListener("click", () => {
+      quantity = Math.max(quantity - 1, 1);
+      quantityInput.value = quantity.toString();
+    });
+
+    // add to card btn
+    addToCardBtn.addEventListener("click", () => {
+      const size = document.querySelector(".selected-size")?.textContent;
+      if (!size) {
+        return alert("You need to select a size before");
+      }
+      // addToCardBtn.disabled = true;
+
+      const cart = CartCookiesClient.addItem({
+        // para añadir a las cookies
+        productId: productIdInput.value,
+        size: size,
+        quantity: quantity,
+      });
+
+      // console.log({
+      //   id: productIdInput.value,
+      //   size: size,
+      //   quantity: quantity,
+      // });
+      itemInCart.set(cart.length);
+      // console.log(itemInCart.get());
+      // window.location.href = "/cart";
+      navigate("/cart"); // esto es para hacer la transición con astro de manera bonita
+    });
   });
 </script>
 
