@@ -1,0 +1,108 @@
+---
+import { actions } from "astro:actions";
+
+import MainLayout from "@/layouts/MainLayout.astro";
+import ProductsInCart from "@/components/cart/ProductsInCart.astro";
+import TotalItemsInCart from "@/components/cart/TotalItemsInCart.astro";
+import { Formatter } from "@/utils/formatter";
+
+const cookies = Astro.cookies.get("cart")?.value ?? "[]";
+const { data: products, error } = await actions.loadProductsFromCart({
+  cookies,
+});
+// console.log({ products });
+// if (error || !products) {
+//   // esto es para que no de products undefined pero si lo pongo no me deja acceder al carrito porque da undefined y por ende, salta el error por tanto tengo que poner el ? en el map del product
+//   return Astro.redirect("/");
+// }
+
+const total = products?.reduce(
+  (accumulated, product) => accumulated + product.price * product.quantity,
+  0,
+);
+---
+
+<MainLayout title="Cart">
+  <h1 class="mb-6">Cart</h1>
+
+  <section class="grid grid-cols-1 sm:grid-cols-2">
+    <div class="order-2 sm:order-1">
+      <ProductsInCart>
+        {
+          products?.map((product) => (
+            <article>
+              <img src={product.image} alt={product.title} class="w-20 h-20" />
+              <div>
+                <a href={`/products/${product.slug}`} class="hover:underline">
+                  {product.title}
+                </a>
+                <div>
+                  <p>${product.price}</p>
+                  <p>Quantity: {product.quantity}</p>
+                  <p>
+                    Size:{" "}
+                    <span class="btn-deleted text-blue-500">
+                      {product.size}
+                    </span>
+                  </p>
+                  <button
+                    data-id={product.productId}
+                    data-size={product.size}
+                    class="text-blue-500 btn-delete"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            </article>
+          ))
+        }
+      </ProductsInCart>
+    </div>
+    <div class="order-1 sm:order-2">
+      <TotalItemsInCart>
+        <section>
+          <div class="flex justify-between text-gray-400 mb-4">
+            <span>SubTotal </span>
+            <span>{Formatter.currency(total ? total : 0)}</span>
+          </div>
+          <div class="flex justify-between text-gray-400 mb-4">
+            <span>Tax </span>
+            <span>{Formatter.currency(total ? total * 0.15 : 0)}</span>
+          </div>
+
+          <div class="flex justify-between text-xl font-bold">
+            <span>Total</span>
+            <span>{Formatter.currency(total ? total! * 1.15 : 0)}</span>
+          </div>
+        </section>
+      </TotalItemsInCart>
+    </div>
+  </section>
+</MainLayout>
+
+<script>
+  import { itemInCart } from "@/store";
+  import { CartCookiesClient } from "@/utils";
+  import { navigate } from "astro:transitions/client";
+
+  document.addEventListener("astro:page-load", () => {
+    // para que los view transition funcionen necesitas envolver l anavegación en el astro:page-load
+    const deleteBtn: NodeListOf<HTMLButtonElement> =
+      document.querySelectorAll(".btn-delete");
+
+    deleteBtn.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const target = e.target as HTMLButtonElement;
+        const productId = target.dataset.id ?? "";
+        const size = target.dataset.size ?? "";
+
+        // console.log({ productId, size });
+        const cart = CartCookiesClient.removeItem(productId, size); // para eliminar el elemento del carrito
+        itemInCart.set(cart.length);
+        // window.location.reload();
+        navigate("/cart"); // par ala navegación entre pantalla de forma bonita
+      });
+    });
+  });
+</script>

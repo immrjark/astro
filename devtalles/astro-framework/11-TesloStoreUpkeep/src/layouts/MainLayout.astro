@@ -1,0 +1,30 @@
+---
+import { ViewTransitions } from "astro:transitions";
+import "../styles/global.css";
+import Navbar from "@/components/shared/Navbar.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+const { title = "Astro Store" } = Astro.props;
+---
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <ViewTransitions />
+  </head>
+  <body class="">
+    <Navbar />
+    <main class="container m-auto w-[750px] sm:max-w-3xl sm:px-2 px-5">
+      <slot />
+    </main>
+  </body>
+</html>
