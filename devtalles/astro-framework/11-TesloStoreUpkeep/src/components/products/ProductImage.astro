@@ -1,0 +1,20 @@
+---
+import { Image } from "astro:assets";
+
+interface Props {
+  src: string;
+  alt: string;
+  className: string; // no puedo poner class porque es una palabra reservada en js
+}
+
+const { alt, className, src } = Astro.props;
+const currentImage = src.startsWith("http") ? src : `/images/products/${src}`;
+---
+
+<Image
+  src={currentImage}
+  alt={alt}
+  class:list={[className]}
+  width={20}
+  height={20}
+/>

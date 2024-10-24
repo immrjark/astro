@@ -47,7 +47,7 @@ export default defineConfig({
     },
     session:  ({session, token}) => {
       session.user = token.user as AdapterUser
-      console.log({SessionUser: session.user}); // se ve todo menos la contraseña gracias al return del user quitando la password
+      // console.log({SessionUser: session.user}); // se ve todo menos la contraseña gracias al return del user quitando la password
       
       return session;
     }

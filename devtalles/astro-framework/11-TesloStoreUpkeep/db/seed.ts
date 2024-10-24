@@ -12,14 +12,16 @@ export default async function seed() {
 	]
 
 	const normalMan = {
-		id: UUID(), // con este uuid cada vez que bajes y subas las databases se genera uno nuevo y por ende, se pierden credenciales
+		id: 'ABC-123-NORMAL', // debería ser con UUID pero para que no de error cada vez que subas y bajes la app y se pierda el user, le doy un concreto
+		// UUID(), // con este uuid cada vez que bajes y subas las databases se genera uno nuevo y por ende, se pierden credenciales
 		email: 'normalman@google.com',
 		name: 'Nomral Man',
 		password: bcrypt.hashSync('123456'),
 		role: 'admin'
 	}
 	const madDog = {
-		id: UUID(),
+		id: 'ABC-123-DOG',
+		// UUID(),
 		email: 'maddog@google.com',
 		name: 'Mad Dog',
 		password: bcrypt.hashSync('123456'),

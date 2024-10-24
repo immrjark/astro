@@ -1,0 +1,81 @@
+---
+import ProductImage from "@/components/products/ProductImage.astro";
+import Pagination from "@/components/shared/Pagination.astro";
+import MainLayout from "@/layouts/MainLayout.astro";
+import { Formatter } from "@/utils";
+import { actions } from "astro:actions";
+
+// const session = await getSession(Astro.request);
+// const { user } = session ?? {}; // porque puede ser nulo
+const searchParams = Astro.url.searchParams;
+const pageParams = Number(searchParams.get("page") ?? 1);
+
+const elements = await actions.getProductsByPage({
+  page: pageParams,
+});
+const { data, error } = elements;
+
+if (error) {
+  return Astro.redirect("/");
+}
+
+const { totalPages, products } = data;
+---
+
+<MainLayout title="Admin Dashboard">
+  <h1>Dashboard</h1>
+  <p class="text-2xl underline text-gray-800 mt-2">Product List</p>
+
+  <table class="w-full mt-5">
+    <thead>
+      <tr class="">
+        <th class="text-left">Image</th>
+        <th class="text-left">Title</th>
+        <th class="text-left">Price</th>
+        <th class="text-left">Stock</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        {
+          products?.map((product) => (
+            <tr>
+              {/* <td>{product.id}</td> */}
+              {/*Esto :down dará un error si no hay imagen así que debe ser obligatoriio por eso creo la condición*/}
+              <td>
+                {product.images ? (
+                  <ProductImage
+                    src={product.images.split(",")[0]}
+                    alt={product.title}
+                    className="w-20 h-20 hover:scale-[4]"
+                  />
+                ) : (
+                  "Men, that product must need a image"
+                )}
+              </td>
+              <td>
+                <a
+                  class="hover:underline cursor-pointer"
+                  href={`/admin/products/${product.slug}`}
+                >
+                  {/* data-astro-prefech="load" */}
+                  {product.title}
+                </a>
+              </td>
+              <td class="product-td ">{Formatter.currency(product.price)}</td>
+              <td class="product-td">{product.stock}</td>
+            </tr>
+          ))
+        }
+      </tr>
+    </tbody>
+  </table>
+
+  <Pagination totalPages={totalPages} />
+</MainLayout>
+
+<style>
+  .product-td {
+    text-align: right;
+  }
+</style>
