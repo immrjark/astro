@@ -1,6 +1,7 @@
+import { ImageUpload } from "@/utils/imageUpload";
 import { defineAction } from "astro:actions";
 import { z } from "astro:content";
-import { db, eq, Product } from "astro:db";
+import { db, eq, Product, ProductImage } from "astro:db";
 import { getSession } from "auth-astro/server";
 import { v4 as UUID } from 'uuid';
 
@@ -61,16 +62,47 @@ export const updateProduct = defineAction({
 
     // console.log(product);
 
+    const queries: any = []
+
     if( !form.id ) {
-      await db.insert(Product).values(product)
+      queries.push(
+        db.insert(Product).values(product)
+      )
     } else {
-      await db.update(Product).set(product).where(eq(Product.id, id))
-    }
-    await db.update(Product).set(product).where(eq(Product.id, id))
-    
+      queries.push(
+        db.update(Product).set(product).where(eq(Product.id, id))
+      )
+    }    
     // images
-    console.log(imageFiles);
+    // console.log(imageFiles);
+    // imageFiles?.forEach( async (imageFile) => {
+    //   if(imageFile.size <= 0) return
+    //   const url = await ImageUpload.upload(imageFile)
+    // })
+
+    // Lo hago de esta manera porque las condiciones que se tienen que cumplir son todas estas para que haya una url de ahí que haya quitado el de imageFiles?
+    const secureUrl:string[] = []
+    if (form.imageFiles && form.imageFiles.length > 0 && form.imageFiles[0].size > 0) {
+      const urls = await Promise.all(
+        form.imageFiles.map(
+          file => ImageUpload.upload(file)
+        )
+      )
+      secureUrl.push(...urls)
+    }
+
+    secureUrl.forEach(imageUrl => {
+      const imageObj = {
+        id: UUID(),
+        image: imageUrl,
+        productId: product.id,
+      }
+
+      queries.push(db.insert(ProductImage).values(imageObj))
+    })
+
+    await db.batch(queries)
     
-    return product
+    return product;
   }
 })

@@ -9,6 +9,8 @@
 ## Otros
 - Intalación para el manejo de las cookies `pnpm i js-cookie` con [js-cookie](https://www.npmjs.com/package/js-cookie)
 
+- Instalación de Cloudinary `bun i cloudinary`
+
 ## Comentarios interesantes
 
 - Para que se den las view transition bonitas, necesitas tener varias cosas:
