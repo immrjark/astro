@@ -12,6 +12,7 @@ if (error) {
 }
 
 const { product, images } = data;
+// console.log(product);
 ---
 
 <MainLayout title="Mantenimiento de producto">
@@ -148,7 +149,16 @@ const { product, images } = data;
         <div class="flex">
           {
             ["XS", "S", "M", "L", "XL", "XXL"].map((size) => (
-              <button class="btn-size">{size}</button>
+              <button
+                type="button"
+                class="btn-size"
+                onclick="this.classList.toggle('active')"
+                class:list={
+                  product.sizes.split(",").includes(size) ? "active" : "" //esto es para las crear el active en los botons en los cuales esté el size
+                }
+              >
+                {size}
+              </button>
             ))
           }
         </div>
@@ -252,3 +262,28 @@ const { product, images } = data;
     }
   </style>
 </MainLayout>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    // pongo esto porque estoy usando view transitions
+    const form = document.querySelector("form") as HTMLFormElement;
+    const sizeBtn = document.querySelectorAll(".btn-size");
+
+    if (!form) return;
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const selectedSize = Array.from(sizeBtn)
+        .filter((btn) => btn.classList.contains("active"))
+        .map((btn) => btn.textContent?.trim())
+        .join(",");
+
+      const formData = new FormData(form);
+      formData.set("sizes", selectedSize);
+      const formValue = Object.fromEntries(formData.entries());
+
+      console.log(formValue);
+    });
+  });
+</script>
