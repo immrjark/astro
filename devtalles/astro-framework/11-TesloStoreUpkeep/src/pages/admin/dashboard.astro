@@ -25,6 +25,12 @@ const { totalPages, products } = data;
 <MainLayout title="Admin Dashboard">
   <h1>Dashboard</h1>
   <p class="text-2xl underline text-gray-800 mt-2">Product List</p>
+  <div class="flex justify-end">
+    <a
+      class="bg-gray-600 hover:bg-gray-800 text-white font-semibold text-sm py-2 px-4 rounded-full transition-all"
+      href="/admin/products/new">Create New Product</a
+    >
+  </div>
 
   <table class="w-full mt-5">
     <thead>

@@ -3,10 +3,30 @@ import { z } from "astro:content";
 import { db, eq, Product, ProductImage } from "astro:db";
 
 
+const newProductShell = {
+  id: '',
+  description: 'Product Description',
+  gender: 'unisex',
+  price: 0,
+  sizes: 'M',
+  slug: '',
+  stock: 0,
+  tags: '',
+  title: '',
+  type: '',
+}
+
 export const getProductsBySlug = defineAction({
   accept: 'json',
   input: z.string(),
   handler: async (slug) => {
+    if(slug === 'new') {
+      return {
+        product: newProductShell,
+        images: [],
+      }
+    }
+
     const [product] = await db
       .select()
       .from(Product)
