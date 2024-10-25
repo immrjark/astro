@@ -21,6 +21,7 @@ const { product, images } = data;
 
   <form class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <!-- Datos generales -->
+
     <div class="mt-2">
       <h2 class="text-lg font-semibold">Datos generales</h2>
 
@@ -36,6 +37,17 @@ const { product, images } = data;
         />
       </div>
 
+      <!-- Id -->
+      <div class="mb-4">
+        <label for="id" class="block">Product ID</label>
+        <input
+          type="text"
+          name="id"
+          readonly
+          class="w-full p-2 border border-gray-300 rounded block"
+          value={product.id}
+        />
+      </div>
       <!-- Slug -->
       <div class="mb-4">
         <label for="slug" class="block">Slug</label>
@@ -264,6 +276,9 @@ const { product, images } = data;
 </MainLayout>
 
 <script>
+  import { actions } from "astro:actions";
+  import { navigate } from "astro:transitions/client";
+
   document.addEventListener("astro:page-load", () => {
     // pongo esto porque estoy usando view transitions
     const form = document.querySelector("form") as HTMLFormElement;
@@ -271,7 +286,7 @@ const { product, images } = data;
 
     if (!form) return;
 
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const selectedSize = Array.from(sizeBtn)
@@ -284,6 +299,14 @@ const { product, images } = data;
       const formValue = Object.fromEntries(formData.entries());
 
       console.log(formValue);
+
+      const { data, error } = await actions.updateProduct(formData);
+
+      if (error) {
+        return alert(error.message);
+      }
+
+      navigate(`/admin/products/${data.slug}`);
     });
   });
 </script>
