@@ -13,10 +13,18 @@ if (error) {
 
 const { product, images } = data;
 // console.log();
+
+const theImage = images[0].image.startsWith("http")
+  ? images[0].image
+  : `${import.meta.env.PUBLIC_URL}/images/products/${images[0].image}`;
 ---
 
 <!-- image={image} -->
-<MainLayout title={product.title} description={product.description}>
+<MainLayout
+  title={product.title}
+  description={product.description}
+  image={theImage}
+>
   <div class="grid grid-cols-1 md:grid-cols-3 w-full">
     <ProductSlideshow images={images.map((i) => i.image)} />
 
