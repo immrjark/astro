@@ -1,42 +1,46 @@
 ---
+import type { Place } from "@prisma/client";
 import Star from "./shared/Star.astro";
+import { Image } from "astro:assets";
 
-const calificacion = 4; // Número de estrellas que deseas mostrar (por ejemplo, 4 de 5)
-const totalEstrellas = 5; // Total de estrellas posibles
+interface Props {
+  place: Place; // si cambio de prisma a otro, esto se romperá
+}
 
-const estrellas = Array.from(
-  { length: totalEstrellas },
-  (_, index) => index < calificacion,
-);
+const { place } = Astro.props;
+const imageURL = `/assets/images/${place.image}`;
 ---
 
 <!-- component --><!-- component --><!-- This is an example component -->
 <div class="w-full mx-auto">
-  <div
-    class="bg-white shadow-md rounded-lg max-w-sm dark:bg-gray-800 dark:border-gray-700"
-  >
-    <a href="#">
-      <img
-        class="pb-5 rounded-lg overflow-hidden"
-        src="https://i.ibb.co/KqdgGY4/cosmetic-packaging-mockup-1150-40280.webp"
-        alt="product image"
+  <div class="shadow-md rounded-lg max-w-sm">
+    <a href=`/place/${place.id}`>
+      <Image
+        class="rounded-t-lg overflow-hidden"
+        src={imageURL}
+        alt={place.title}
+        width="500"
+        height="500"
       />
     </a>
-    <div class="px-5 pb-5">
-      <a href="#">
-        <h3
-          class="text-gray-900 font-semibold text-xl tracking-tight dark:text-white"
-        >
-          Apple Watch Series 7 GPS, Aluminium Case, Starlight Sport
-        </h3>
-      </a>
+    <div class="px-5 py-5 bg-gray-800">
+      <h3
+        class="text-gray-900 font-semibold text-lg tracking-tight dark:text-white"
+      >
+        {place.title}
+      </h3>
+
       <div class="flex items-center mt-2.5 mb-5">
         <section class="flex flex-1">
-          {estrellas.map((fill) => <Star filled={fill} />)}
+          {
+            Array.from({ length: Number(place.avg_rating) }).map((_) => (
+              <Star />
+            ))
+          }
         </section>
         <span
           class="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ml-3"
-          >5.0</span
+          >{place.avg_rating}</span
         >
       </div>
     </div>

@@ -1,0 +1,52 @@
+---
+import type { GetStaticPaths } from "astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+import { actions } from "astro:actions";
+import Star from "../../components/shared/Star.astro";
+import { Image } from "astro:assets";
+
+// necesitas el getStaticsPath porque estamos en modo estático por defecto y no queremos indicarle que es dinámico
+export const getStaticPaths = (async () => {
+  const { data } = await actions.getPlaces();
+
+  if (!data) {
+    throw new Error("No data from places");
+  }
+
+  return data.map((place) => ({
+    params: {
+      id: place.id,
+    },
+    props: {
+      place,
+    },
+  }));
+}) satisfies GetStaticPaths;
+
+const { id } = Astro.params;
+const { place } = Astro.props;
+const imageURL = `/assets/images/${place.image}`;
+---
+
+<MainLayout>
+  <section
+    class="grid grid-cols-2 gap-2 bg-gray-200 rounded-lg p-2 shadow-md shadow-gray-600"
+  >
+    <article class="bg-white/70 p-5 rounded-xl">
+      <h1 class="text-xl font-bold">#{id} {place.title}</h1>
+      <p>{place.description}</p>
+      <div class="flex flex-1">
+        {Array.from({ length: Number(place.avg_rating) }).map((_) => <Star />)}
+      </div>
+    </article>
+    <article>
+      <Image
+        src={imageURL}
+        alt={place.title}
+        class="w-ful h-96 object-cover rounded-xl"
+        height={800}
+        width={800}
+      />
+    </article>
+  </section>
+</MainLayout>

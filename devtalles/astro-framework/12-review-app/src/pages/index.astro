@@ -1,14 +1,17 @@
 ---
+// export const prerender = false; // con el false sería para que no se creen las páginas estáticas y sean a través del servidor porque he ppuesto el hybrid y por ende, esto me hace falta si quiero que se juegue con el servidor y el estático
+
+import { actions } from "astro:actions";
 import PlaceCard from "../components/PlaceCard.astro";
-import { prisma } from "../db";
 import MainLayout from "../layouts/MainLayout.astro";
 
-const places = await prisma.place.findMany();
+const { data: places = [], error } = await actions.getPlaces();
 ---
 
 <MainLayout>
 	<h1 class="text-3xl font-bold">Places</h1>
-	<section>
-		<PlaceCard />
+	<section class="grid grid-cols-3 gap-4">
+		{places.map((place) => <PlaceCard place={place} />)}
+		<!-- <PlaceCard /> -->
 	</section>
 </MainLayout>
