@@ -1,0 +1,32 @@
+---
+import { actions } from "astro:actions";
+
+interface Props {
+  placeID: string;
+}
+
+const { placeID } = Astro.props;
+
+// const data = await actions.getAvailability.orThrow(placeID); // el orThrow evita que la data sea undefined porque si hay un error, hace automáticamente el throw error en el componente
+
+const { data, error } = await Astro.callAction(
+  actions.getAvailability,
+  placeID,
+); // esto es por los serverisland por eso he quitado la action de arriba
+
+if (!data) {
+  throw new Error(`Data is not avilability, Error: ${error.message}`);
+}
+const { isAvilability, message } = data;
+---
+
+<p
+  class:list={[
+    "mt-5 text-center rounded-xl p-2",
+    isAvilability
+      ? "bg-green-200 text-green-800 font-semibold"
+      : "bg-red-200 text-red-800 font-semibold",
+  ]}
+>
+  {message}
+</p>
