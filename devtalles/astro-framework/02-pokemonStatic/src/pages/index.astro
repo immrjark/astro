@@ -16,7 +16,7 @@ const data = (await resp.json()) as PokemonListResponse;
   <h1 class="text-4xl text-center">Pokemon</h1>
   <section
     aria-label="Listado de pokemons"
-    class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-9"
+    class="grid px-5 grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-9"
   >
     {
       data.results.map((pokemon) => (
