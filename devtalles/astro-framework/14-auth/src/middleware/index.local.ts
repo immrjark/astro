@@ -1,3 +1,5 @@
+// no funciona por el nombre del archivo. solo es una demo
+
 import type { MiddlewareNext } from "astro";
 import { defineMiddleware } from "astro:middleware";
 

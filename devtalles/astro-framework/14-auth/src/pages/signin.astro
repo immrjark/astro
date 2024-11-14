@@ -1,8 +1,16 @@
 ---
 import SingInForm from "@/components/authForm/SingInForm.astro";
 import AuthLayout from "@/layouts/AuthLayout.astro";
+
+const email = Astro.cookies.get("email")?.value ?? "";
+const rememberMe = !!email; // para saber si es true or false
 ---
 
 <AuthLayout>
-  <SingInForm titlePage="SignIn" comment="Please create your account." />
+  <SingInForm
+    titlePage="SignIn"
+    comment="Please create your account."
+    email={email}
+    rememberMe={rememberMe}
+  />
 </AuthLayout>
