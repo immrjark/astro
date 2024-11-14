@@ -96,6 +96,7 @@ const { titlePage, comment, email, rememberMe } = Astro.props;
 
 <script>
   import { actions } from "astro:actions";
+  import Swal from "sweetalert2";
 
   const form = document.querySelector("form") as HTMLFormElement;
   const btnSubmit = document.querySelector("#btn-submit") as HTMLButtonElement;
@@ -107,8 +108,17 @@ const { titlePage, comment, email, rememberMe } = Astro.props;
     const formData = new FormData(form);
 
     const { data, error } = await actions.signinUser(formData);
-    console.log(error);
+    if (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Credentials are not correct",
+        text: error.message,
+      });
+      btnSubmit.removeAttribute("disabled");
+      return;
+    }
+    // console.log(error);
 
-    btnSubmit.removeAttribute("disabled");
+    window.location.replace("/private"); // con el replace no puede le usuario volver a la pantalla anterior
   });
 </script>
