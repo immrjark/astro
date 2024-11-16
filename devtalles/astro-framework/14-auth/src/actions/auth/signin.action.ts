@@ -1,7 +1,14 @@
-import { firebase } from "@/firebase/config";
-import { defineAction } from "astro:actions";
-import { z } from "astro:schema";
-import { createUserWithEmailAndPassword, type AuthError } from "firebase/auth";
+
+import { defineAction,  } from 'astro:actions';
+import { z } from 'astro:schema';
+
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  updateProfile,
+  type AuthError,
+} from 'firebase/auth';
+import { firebase } from '@/firebase/config';
 
 export const signinUser = defineAction({
   accept: 'form',
@@ -11,50 +18,50 @@ export const signinUser = defineAction({
     password: z.string().min(6),
     remember_me: z.boolean().optional(),
   }),
-  handler: async (input, context) => {
-
-    // para las cookies
-    const {email, name, password, remember_me} = input
-    const {cookies} = context
-    // console.log({email, name, password, remember_me});
-
-    if(remember_me) {
+  handler: async ({ name, email, password, remember_me }, { cookies }) => {
+    // Cookies
+    if (remember_me) {
       cookies.set('email', email, {
-        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365), // esto es un año. 1 segundo * 60segundos del min * 60 min de la hora * 24 del día * 365 días del año
-        path: '/', // el path para el cual es útil la cookie
-
-      }) 
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365), // 1 año,
+        path: '/',
+      });
     } else {
-        cookies.delete('email')
+      cookies.delete('email', {
+        path: '/',
+      });
     }
 
-    // para la creación de usuario
+    // Creación de usuario
+
     try {
       const user = await createUserWithEmailAndPassword(
-        firebase.auth, 
-        email, 
+        firebase.auth,
+        email,
         password
-      )
-      // actualizar el nombre
+      );
 
-      // verificar el correo
+      // Actualizar el nombre (displayName)
+      updateProfile(firebase.auth.currentUser!, {
+        displayName: name,
+      });
+
+      // Verificar el correo electrónico
+      await sendEmailVerification(firebase.auth.currentUser!, {
+        url: `http://localhost:4321/private?emailVerified=true`,
+      });
 
       return {
-        uid: user.user.uid,
+        user: user.user.uid,
         email: user.user.email
       };
-
     } catch (error) {
-      // console.log(error)
-      const authError = error as AuthError;
+      const firebaseError = error as AuthError;
 
-      if(authError.code === 'auth/email-already-in-use')  {
-        throw new Error('This user is already in use');
+      if (firebaseError.code === 'auth/email-already-in-use') {
+        throw new Error('El correo ya está en uso');
       }
-      throw new Error('Help me');
-      
+
+      throw new Error('Auxilio! algo salió mal');
     }
-    
-    return {ok: true, msg: 'User created'}
-  }
-})
+  },
+});

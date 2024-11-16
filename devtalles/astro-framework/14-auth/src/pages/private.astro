@@ -1,18 +1,83 @@
 ---
+import { firebase } from "@/firebase/config";
 import MainLayout from "../layouts/MainLayout.astro";
+
+const { user, isLoggedIn } = Astro.locals;
+if (!isLoggedIn || !user) {
+	return Astro.redirect("/login");
+}
+
+const { avatar, email, name, emailVerified } = user;
+
+// gracias a los locals implementados en los middleware, puedo comentar esto 👇🏽 y usar esto 👆🏽
+// const firebaseUser = firebase.auth.currentUser;
+// // console.log(firebaseUser);
+
+// if (firebaseUser === null) {
+// 	return Astro.redirect("/login");
+// }
+
+// await firebaseUser?.reload();
+// const { displayName, email, emailVerified, photoURL } = firebaseUser;
 ---
 
 <MainLayout title="Privada">
 	<main>
-		<h1>Private Page</h1>
-		<p>
-			Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cum sapiente in
-			aut rerum eos aliquid, tenetur quasi quae blanditiis commodi illum
-			consequatur saepe inventore quis enim est alias aperiam ex. Lorem, ipsum
-			dolor sit amet consectetur adipisicing elit. Nam magnam totam officia!
-			Autem doloribus incidunt, consectetur quaerat voluptate quibusdam
-			repudiandae delectus ex cum repellendus assumenda sint sit, recusandae
-			illum
-		</p>
+		<div
+			class="font-sans h-[550px] bg-white/60 rounded-lg w-5/6 mx-auto flex flex-row justify-center items-center text-white"
+		>
+			<div
+				class="card w-96 flex flex-col mx-auto rounded-2xl bg-neutral-800 shadow-xl hover:shadow"
+			>
+				{
+					avatar ? (
+						<img
+							class="w-32 mx-auto rounded-full -mt-20 border-8 border-white/90"
+							src={avatar}
+							alt={`Avatar of ${name}`}
+						/>
+					) : (
+						<img
+							class="w-32 mx-auto rounded-full -mt-20 border-8 border-white/90"
+							src="https://avatars.githubusercontent.com/u/67946056?v=4"
+							alt="unavatar"
+						/>
+					)
+				}
+
+				<div class="text-center mt-2 text-3xl font-medium">
+					{name ? name : "No display Name"}
+				</div>
+
+				<div class="text-center mt-2 font-light text-sm">@immrjark</div>
+				<div class="text-center font-normal text-lg mb-4">{email}</div>
+				{
+					emailVerified ? (
+						<span class=" text-center text-sm text-green-600 font-mono font-bold tracking-wider">
+							Email Verified
+						</span>
+					) : (
+						<span class="text-center text-sm text-red-600 font-mono font-bold tracking-wider">
+							Email No Verified
+						</span>
+					)
+				}
+				<div class="px-6 text-center mt-4 font-light text-sm">
+					<p>
+						Front end Developer, avid reader. Love to take a long walk, swim
+					</p>
+				</div>
+				<hr class="mt-8" />
+				<div class="flex p-4">
+					<div class="w-1/2 text-center">
+						<span class="font-bold">1.8 k</span> Followers
+					</div>
+					<div class="w-0 border border-gray-300"></div>
+					<div class="w-1/2 text-center">
+						<span class="font-bold">2.0 k</span> Following
+					</div>
+				</div>
+			</div>
+		</div>
 	</main>
 </MainLayout>
